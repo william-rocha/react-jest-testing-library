@@ -2,7 +2,7 @@
 # Como testar aplicações React usando Jest & Testing Library
 
 ## Introdução
-- Oi pessoal, tudo bem? Eu sou a Fer e no vídeo de hoje eu vou te ensinar como testar sua aplicação frontend usando o **Jest** e a **Testing Library**.
+- como testar sua aplicação frontend usando o **Jest** e a **Testing Library**.
 - Vamos entender o que são essas ferramentas, o papel delas e como elas auxiliam na criação de testes unitários.
 
 ## Jest
@@ -160,9 +160,5 @@ describe('FileList Page', () => {
 - Testes seguem o padrão **AAA** (Arrange, Act, Assert).
 - Abstração de código repetitivo melhora a legibilidade dos testes.
 - Documentação do Jest e Testing Library é fundamental para entender todas as funcionalidades disponíveis.
-
-## Feedback
-- Deixe nos comentários se gostariam de ver uma parte 2 com testes mais complexos ou outros tópicos.
-- Siga o canal e deixe seu like!
 
 +++
