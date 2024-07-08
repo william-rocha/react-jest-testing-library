@@ -2,74 +2,167 @@
 # Como testar aplicações React usando Jest & Testing Library
 
 ## Introdução
+- Oi pessoal, tudo bem? Eu sou a Fer e no vídeo de hoje eu vou te ensinar como testar sua aplicação frontend usando o **Jest** e a **Testing Library**.
+- Vamos entender o que são essas ferramentas, o papel delas e como elas auxiliam na criação de testes unitários.
 
-- **Ferramentas:** Jest e Testing Library
-  - **Jest:** Biblioteca para criação de **testes unitários** em aplicações **JavaScript**. Fornece funções, ferramentas e um ambiente para rodar testes.
-  - **Testing Library:** Fornece utilitários para escrita de cenários de testes unitários, suportando bibliotecas como **React**, **Angular** e **Vue**.
-
-## Configuração do Jest
-
-1. **Criação de aplicação com Create React App (CRA):**
-   - CRA já vem pré-configurado com Jest.
-2. **Configuração manual:**
-   - Seguir a documentação oficial do Jest para configurar.
+## Jest
+- **Jest** é uma biblioteca para criação de testes unitários em aplicações JavaScript.
+- Fornece funções, ferramentas e ambiente para rodar e criar testes unitários.
+- Documentação detalha a configuração do Jest.
+- **Create React App** já traz o Jest pré-configurado.
+- Se você não usou Create React App, pode seguir o passo a passo da documentação do Jest para configurar.
 
 ## Testing Library
+- **Testing Library** fornece utilitários para escrever cenários de testes unitários.
+- Diferente do Jest, não fornece um ambiente para rodar testes, mas sim funções utilitárias.
+- Suporte para várias bibliotecas frontend como **React**, **Angular**, **Vue**, **Svelte**.
+- Funções para interação com a **DOM** e simulação de ações do usuário.
 
-- Fornece utilitários para interagir com a **DOM** e simular ações do usuário.
-- Suporte a diversas bibliotecas **frontend** como **React**, **Angular** e **Svelte**.
+## Aplicação Exemplo
+- Aplicação é um editor de texto online onde o usuário pode criar, salvar, visualizar, excluir e favoritar arquivos.
+- Vamos escrever testes unitários para os componentes dessa aplicação.
 
-## Exemplo de aplicação para testes
+## Criando Testes
+### Configuração Inicial
+- Arquivos de teste devem ter a extensão `.test.tsx`.
+- Jest identifica e roda arquivos de teste automaticamente.
 
-- **Aplicação:** Editor de texto online
-  - Funcionalidades:
-    - Criação de novos arquivos de texto.
-    - Visualização, exclusão e favoritação de arquivos.
+### Testando a NavBar
+- **NavBar**: componente lateral onde o usuário pode clicar para abrir abas.
+- Vamos criar um teste para manipulação da **DOM**: cliques nos elementos e verificação de elementos em tela.
 
-## Escrevendo testes unitários
+#### Configuração e Renderização
+- Criar o arquivo de teste para o componente `NavBar`.
+- Utilizar o método **describe** do Jest para declarar um **test suite**.
+- Métodos **it** ou **test** são usados para declarar **test cases**.
+- Utilizar a função **render** da Testing Library para renderizar o componente.
 
-### Testando o componente Navbar
+#### Verificação de Elementos
+- Utilizar **screen** para acessar a **DOM virtual**.
+- Métodos **getByText** e **findByText** ajudam a buscar elementos na DOM.
+- **getByText** lança erro se não encontrar o elemento, enquanto **findByText** retorna `undefined`.
 
-1. **Estrutura inicial:**
-   - Criação de um teste para o componente Navbar.
-   - Uso de extensão `.test.tsx` para os arquivos de teste.
+#### Verificação de Ações
+- Utilizar **fireEvent** da Testing Library para disparar eventos como cliques.
+- Utilizar **jest.mock** para simular importações reais.
+- Verificar se funções são chamadas corretamente usando **jest.fn**.
 
-2. **Configuração do teste:**
-   - Criação do **teste suite** usando `describe`.
-   - Importação de `render` da Testing Library para renderizar componentes React.
+#### Exemplo de Teste
+```jsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import NavBar from '../components/NavBar';
+import { BrowserRouter } from 'react-router-dom';
+import { jest } from '@jest/globals';
 
-3. **Verificação de elementos:**
-   - Uso do objeto `screen` e método `getByText` para buscar elementos na DOM virtual.
-   - Uso do método `expect` para verificar se os elementos estão no documento.
+describe('NavBar Component', () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
 
-4. **Teste de navegação:**
-   - Mocagem de funções usando `jest.fn()`.
-   - Verificação de chamadas de funções específicas.
+  it('should render without errors', () => {
+    render(
+      <BrowserRouter>
+        <NavBar />
+      </BrowserRouter>
+    );
 
-5. **Refatoração de código:**
-   - Criação de função `renderComponent` para reduzir repetição de código.
-   - Uso de padrão **AAA (Arrange-Act-Assert)** para organizar os testes.
+    expect(screen.getByText('All files')).toBeInTheDocument();
+    expect(screen.getByText('Favorites')).toBeInTheDocument();
+  });
 
-### Testando a página FileList
+  it('should call navigate on click', () => {
+    const mockNavigate = jest.fn();
+    jest.mock('react-router-dom', () => ({
+      ...jest.requireActual('react-router-dom'),
+      useNavigate: () => mockNavigate,
+    }));
 
-1. **Configuração inicial:**
-   - Criação de pasta `__tests__` dentro da pasta de páginas.
-   - Teste inicial para verificar a renderização dos arquivos.
+    render(
+      <BrowserRouter>
+        <NavBar />
+      </BrowserRouter>
+    );
 
-2. **Mocagem de hooks:**
-   - Uso de `jest.spyOn` para observar e modificar o comportamento de hooks.
-   - Simulação de retornos diferentes para testar vários cenários.
+    fireEvent.click(screen.getByText('All files'));
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+});
+```
 
-3. **Verificação de estados:**
-   - Testes para verificar se o componente mostra um elemento de loading.
-   - Uso de `data-testid` para identificar elementos específicos na DOM.
+### Testando a Página FileList
+- Página que lista todos os arquivos do usuário.
+- Verificação se a página está listando corretamente os arquivos.
 
-4. **Teste de arquivos favoritados:**
-   - Verificação se a lista exibe apenas os arquivos favoritados com base na URL.
-   - Uso de métodos de busca como `queryByText` para verificar ausência de elementos.
+#### Configuração e Renderização
+- Criar função `renderComponent` para evitar repetição de código.
+- Utilizar **beforeEach** para configurar mocks antes de cada teste.
 
-5. **Refatoração final:**
-   - Uso de funções auxiliares como `mountFile` para simplificar a criação de arquivos nos testes.
-   - Aplicação de `beforeEach` para configuração de mocks padrão.
+#### Mocando Funções e Valores
+- Utilizar **jest.spyOn** para espiar métodos e objetos.
+- Utilizar **faker.js** para gerar valores randômicos.
+
+#### Verificação de Elementos
+- Verificar se arquivos são renderizados corretamente.
+- Verificar se elementos de loading são mostrados corretamente.
+
+#### Exemplo de Teste
+```jsx
+import { render, screen } from '@testing-library/react';
+import FileList from '../pages/FileList';
+import { BrowserRouter } from 'react-router-dom';
+import { jest } from '@jest/globals';
+import faker from 'faker';
+
+describe('FileList Page', () => {
+  beforeEach(() => {
+    jest.resetModules();
+  });
+
+  it('should render all files correctly', () => {
+    const files = [
+      { id: faker.datatype.uuid(), title: faker.lorem.words(), favorited: false }
+    ];
+
+    jest.spyOn(useFiles, 'default').mockReturnValue({
+      files,
+      favoritedFiles: [],
+      isLoading: false,
+    });
+
+    render(
+      <BrowserRouter>
+        <FileList />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText(files[0].title)).toBeInTheDocument();
+  });
+
+  it('should show loading element when isLoading is true', () => {
+    jest.spyOn(useFiles, 'default').mockReturnValue({
+      files: [],
+      favoritedFiles: [],
+      isLoading: true,
+    });
+
+    render(
+      <BrowserRouter>
+        <FileList />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+  });
+});
+```
+
+## Considerações Finais
+- Testes seguem o padrão **AAA** (Arrange, Act, Assert).
+- Abstração de código repetitivo melhora a legibilidade dos testes.
+- Documentação do Jest e Testing Library é fundamental para entender todas as funcionalidades disponíveis.
+
+## Feedback
+- Deixe nos comentários se gostariam de ver uma parte 2 com testes mais complexos ou outros tópicos.
+- Siga o canal e deixe seu like!
 
 +++
