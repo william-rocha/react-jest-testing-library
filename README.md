@@ -1,98 +1,75 @@
-<h1 align="center" style="font-weight: bold;">Text Editor ✍</h1>
++++
+# Como testar aplicações React usando Jest & Testing Library
 
-![react](https://img.shields.io/badge/React-blue?style=flat&logo=react)
-![Underdevelopment](https://img.shields.io/badge/GraphQL-e10098?style=flat&logo=graphql)
+## Introdução
 
+- **Ferramentas:** Jest e Testing Library
+  - **Jest:** Biblioteca para criação de **testes unitários** em aplicações **JavaScript**. Fornece funções, ferramentas e um ambiente para rodar testes.
+  - **Testing Library:** Fornece utilitários para escrita de cenários de testes unitários, suportando bibliotecas como **React**, **Angular** e **Vue**.
 
-<p align="center">
- <a href="#tech">Technologies</a> • 
- <a href="#started">Getting Started</a> • 
- <a href="#contribute">Contribute</a> •
- <a href="#license">License</a>
-</p>
+## Configuração do Jest
 
-<p align="center">
-<b>This application is a online Text Editor, where users can create and edit markdown files.</b>
-</p>
+1. **Criação de aplicação com Create React App (CRA):**
+   - CRA já vem pré-configurado com Jest.
+2. **Configuração manual:**
+   - Seguir a documentação oficial do Jest para configurar.
 
-<p align="center">
-    <img src="./.github/assets/file-edit.png" width="300px">
-    <img src="./.github/assets/files.png" width="300px">
-</p>
+## Testing Library
 
+- Fornece utilitários para interagir com a **DOM** e simular ações do usuário.
+- Suporte a diversas bibliotecas **frontend** como **React**, **Angular** e **Svelte**.
 
-<h2 id="tech">Technologies</h2>
+## Exemplo de aplicação para testes
 
-### Client:
-  Built using [React JS](https://pt-br.reactjs.org/), this interface and the layout ware made from scratch by me.
+- **Aplicação:** Editor de texto online
+  - Funcionalidades:
+    - Criação de novos arquivos de texto.
+    - Visualização, exclusão e favoritação de arquivos.
 
-### API
-  For building the server of this application, I used [Hy Graph](https://hygraph.com/) that is an CMS that allow us to build [GraphQL](https://graphql.org/) Content APIs.
+## Escrevendo testes unitários
 
-<h2 id="started">🚀 Getting Started</h2>
+### Testando o componente Navbar
 
-<h4> Prerequisites</h4>
+1. **Estrutura inicial:**
+   - Criação de um teste para o componente Navbar.
+   - Uso de extensão `.test.tsx` para os arquivos de teste.
 
-- Node 12
-- Git 2
+2. **Configuração do teste:**
+   - Criação do **teste suite** usando `describe`.
+   - Importação de `render` da Testing Library para renderizar componentes React.
 
-<h4>Install project</h4>
+3. **Verificação de elementos:**
+   - Uso do objeto `screen` e método `getByText` para buscar elementos na DOM virtual.
+   - Uso do método `expect` para verificar se os elementos estão no documento.
 
-```
-git clone https://github.com/Fernanda-Kipper/text-editor.git
-npm install
-```
+4. **Teste de navegação:**
+   - Mocagem de funções usando `jest.fn()`.
+   - Verificação de chamadas de funções específicas.
 
-<h4>Environment Variables</h4>
+5. **Refatoração de código:**
+   - Criação de função `renderComponent` para reduzir repetição de código.
+   - Uso de padrão **AAA (Arrange-Act-Assert)** para organizar os testes.
 
-In the root of this project, create a `.env` file with the keys and values located on `.env.example`
+### Testando a página FileList
 
-To get these values you need to create an Account on [HyGraph](https://app.hygraph.com/) and then:
+1. **Configuração inicial:**
+   - Criação de pasta `__tests__` dentro da pasta de páginas.
+   - Teste inicial para verificar a renderização dos arquivos.
 
-- Create a new project
-- Inside your project, go to "Project Settings"
-- Inside settings, access the tab "API Access"
-- Add all permisions
+2. **Mocagem de hooks:**
+   - Uso de `jest.spyOn` para observar e modificar o comportamento de hooks.
+   - Simulação de retornos diferentes para testar vários cenários.
 
-<img width="400" alt="Captura de Tela 2023-03-19 às 14 54 48" src="https://user-images.githubusercontent.com/61896274/226196900-5542dd52-0033-40fc-b17b-dbcb8cf9e790.png">
+3. **Verificação de estados:**
+   - Testes para verificar se o componente mostra um elemento de loading.
+   - Uso de `data-testid` para identificar elementos específicos na DOM.
 
-- Copy your **Content API URL** and use as `process.env.REACT_APP_CONTENT_API_URL`
+4. **Teste de arquivos favoritados:**
+   - Verificação se a lista exibe apenas os arquivos favoritados com base na URL.
+   - Uso de métodos de busca como `queryByText` para verificar ausência de elementos.
 
-<img width="393" alt="Captura de Tela 2023-03-19 às 15 03 58" src="https://user-images.githubusercontent.com/61896274/226197693-4ec3bb2e-12b3-44b5-8f69-bfa7256760eb.png">
+5. **Refatoração final:**
+   - Uso de funções auxiliares como `mountFile` para simplificar a criação de arquivos nos testes.
+   - Aplicação de `beforeEach` para configuração de mocks padrão.
 
-
-- Generate an Permanent Auth Tokens and use as `process.env.REACT_APP_CONTENT_API_TOKEN`
-
-<img width="371" alt="Captura de Tela 2023-03-19 às 15 04 32" src="https://user-images.githubusercontent.com/61896274/226197729-924da132-490d-4f6d-84bd-201fb54fa07b.png">
-
-
-
-<h4>Start server</h4>
-
-```
-  //in root
-  npm start
-```
-
-<h2 id="contribute">👩‍💻 Contribute</h2>
-
-If you want to contribute, clone this repo, create your work branch and get your hands dirty!
-
-```bash
-git clone https://github.com/Fernanda-Kipper/text-editor.git
-git checkout -b feature/NAME
-```
-
- At the end, open a Pull Request explaining the problem solved or feature made, if exists, append screenshot of visual modifications and wait for the review!
-
-[How to create a Pull Request](https://www.atlassian.com/br/git/tutorials/making-a-pull-request)
-
-[Commit pattern](https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716)
-
-
-<h2 id="license">📃 License</h2>
-
-This project is under [MIT](./.github/LICENSE) license
-
-
-
++++
